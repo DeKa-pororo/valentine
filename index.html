@@ -6,65 +6,88 @@
 <title>Valentine 💕</title>
 
 <style>
-  body{
-    margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
-    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);
-  }
-  .card{
-    width:min(540px,92vw);padding:26px;border-radius:22px;
-    background:rgba(255,255,255,.25);
-    backdrop-filter:blur(10px);
-    text-align:center;position:relative;overflow:hidden;
-    box-shadow:0 18px 60px rgba(0,0,0,.15);
-    z-index:1;
-  }
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
+    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);}
+  .card{width:min(560px,92vw);padding:26px;border-radius:22px;background:rgba(255,255,255,.25);
+    backdrop-filter:blur(10px);text-align:center;position:relative;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.15);}
   .hidden{display:none;}
   h1{color:#7a1845;font-weight:900;margin:0 0 10px;font-size:clamp(22px,4vw,32px);}
+  .sub{margin:6px 0 14px;color:rgba(0,0,0,.65);font-size:14px;line-height:1.4}
   img{width:180px;margin:14px 0;transition:.3s;}
-  .arena{position:relative;height:110px;margin-top:6px;}
-  button{
-    border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
-    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);
-    -webkit-tap-highlight-color:transparent;
-  }
-  #yesBtn{background:#2ecc71;left:40%;top:50%;transform:translate(-120%,-50%) scale(1);}
-  #noBtn{background:#e74c3c;left:40%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
-  .note{margin-top:10px;color:rgba(0,0,0,.55);font-size:13px;}
 
-  /* 💗 Floating hearts background */
-  #hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
-  @keyframes floatUp{
-    from{transform:translateY(110vh) translateX(0) scale(.8);opacity:0}
-    10%{opacity:.9}
-    to{transform:translateY(-20vh) translateX(60px) scale(1.2);opacity:0}
+  .arena{position:relative;height:120px;margin-top:8px;}
+  button{border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
+    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent;}
+  #yesBtn{background:#2ecc71;left:50%;top:50%;transform:translate(-120%,-50%) scale(1);}
+  #noBtn{background:#e74c3c;left:50%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
+
+  .note{margin-top:12px;color:rgba(0,0,0,.58);font-size:13px;}
+
+  /* Start screen */
+  .tapbtn{
+    position:relative;
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:14px 18px;border-radius:14px;
+    background:#7a1845;color:#fff;font-weight:900;
+    cursor:pointer;box-shadow:0 12px 22px rgba(0,0,0,.18);
+    border:0;font-size:16px;
   }
-  .heart{
-    position:absolute;bottom:-20px;font-size:18px;opacity:0;
-    filter:drop-shadow(0 8px 10px rgba(0,0,0,.15));
-    animation:floatUp linear forwards;
+  .field{
+    width:100%;
+    margin-top:10px;
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
   }
+  input, textarea{
+    width:min(520px,100%);
+    padding:12px 14px;border-radius:14px;border:0;
+    outline:none;
+    background:rgba(255,255,255,.85);
+    font-size:14px;
+  }
+  textarea{min-height:84px;resize:none;}
+  .mini{font-size:12px;color:rgba(0,0,0,.55);margin-top:6px;}
 </style>
 </head>
 
 <body>
 
-<!-- Hearts layer -->
-<div id="hearts"></div>
+<!-- START SCREEN -->
+<div class="card" id="startScreen">
+  <h1 id="startTitle">💕 Нэг удаа дарж эхлүүлээрэй</h1>
+  <div class="sub">
+    iPhone/iPad дээр хөгжим явахгүй байж магадгүй :P <br/>
+    <b>Энд 1 удаа дар</b> → хөгжим асна, дараа нь асуулт гарна 
+  </div>
+
+  <div class="field">
+    <textarea id="loveMsg" maxlength="420" placeholder="Сэтгэлийн үгээ энд бичээрэй… (жишээ нь шүү : Энэ асуултыг асуух гээд их удаан зориглолоо…')"></textarea>
+    <div class="mini" id="charCount">0 / 420</div>
+  </div>
+
+  <div style="margin-top:14px;">
+    <button class="tapbtn" id="startBtn">Tap to Start 🎶</button>
+  </div>
+
+  <div class="note" id="startHint">✨ Дарахад хөгжим асна, тэгээд “Yes/No” гарна.</div>
+</div>
 
 <!-- ASK SCREEN -->
-<div class="card" id="askScreen">
+<div class="card hidden" id="askScreen">
   <h1 id="titleText">Will you be my Valentine? 💕</h1>
-  <img id="cuteImg" src="img1.png" alt="cute">
+
+  <div class="sub" id="msgPreview"></div>
+
+  <img id="cuteImg" src="img.jpg" alt="cute">
   <div class="arena" id="arena">
     <button id="yesBtn">Yes</button>
     <button id="noBtn">No</button>
   </div>
-  <div class="note" id="hint">“No” дарвал “Yes” улам томорно 😄</div>
+  <div class="note" id="hint"></div>
 </div>
 
 <!-- YES SCREEN -->
 <div class="card hidden" id="yesScreen">
-  <h1 id="yesText">Чиний хариуг зүрх догдлон хүлээж, зөвшөөрнө гэж найдаж байсан 🎉</h1>
+  <h1 id="yesText">🎉</h1>
   <img src="yes.gif" alt="yay" style="width:220px;margin:12px 0 6px;">
   <div class="note">Чи намайг яг одоо хамгийн аз жаргалтай хүн болголоо! 💗</div>
 </div>
@@ -75,7 +98,7 @@
 <!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-<!-- Screenshot -->
+<!-- Screenshot (хэрвээ ашиглаж байвал) -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script type="module" src="script.js"></script>
