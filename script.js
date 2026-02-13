@@ -1,6 +1,12 @@
 /* ===== FIREBASE ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, doc, setDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp,
+  increment
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCfRFNVsQ-6-9DyQgCIML4lGuY_-YCoDCs",
@@ -14,15 +20,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ===== HELPERS ===== */
+function qp(k){ return new URLSearchParams(location.search).get(k); }
+const sid = (qp("sid") || "default").trim();
+
+function getName(){
+  const raw = (qp("name") || "").trim();
+  return raw.length ? raw.slice(0, 24) : "Cutie";
+}
+const personName = getName();
+
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
 /* ===== ELEMENTS ===== */
 const startScreen = document.getElementById("startScreen");
 const askScreen   = document.getElementById("askScreen");
 const yesScreen   = document.getElementById("yesScreen");
 const noEndScreen = document.getElementById("noEndScreen");
 
-const startBtn = document.getElementById("startBtn");
-const loveMsg  = document.getElementById("loveMsg");
+const startBtn   = document.getElementById("startBtn");
+const loveMsg    = document.getElementById("loveMsg");
 const msgPreview = document.getElementById("msgPreview");
+const charCount  = document.getElementById("charCount");
 
 const yesBtn = document.getElementById("yesBtn");
 const noBtn  = document.getElementById("noBtn");
@@ -34,98 +53,191 @@ const bgm    = document.getElementById("bgm");
 const titleText = document.getElementById("titleText");
 const yesText   = document.getElementById("yesText");
 
-/* ===== NAME ===== */
-function qp(k){ return new URLSearchParams(location.search).get(k); }
-function getName(){
-  const raw = (qp("name")||"").trim();
-  return raw.length ? raw : "Cutie";
-}
-const personName = getName();
+/* ===== UI: NAME TEXT ===== */
+titleText.textContent = `Надтай хамт ирээдүйгээ бүтээж, олон сайхан дурсамж бүтээх үү, ${personName}? 💕`;
 
-titleText.textContent =
-  `Надтай хамт ирээдүйгээ бүтээх үү, ${personName}? 💕`;
+/* ===== MUSIC: textarea дээр дармагц асна ===== */
+let musicStarted = false;
 
-/* ===== MUSIC ===== */
-let musicStarted=false;
-async function startMusic(){
+async function startMusicOnce(){
   if(musicStarted) return;
   try{
+    // iOS дээр play() user gesture шаарддаг => focus/click дээр асна
+    bgm.volume = 0.3;
     await bgm.play();
-    bgm.volume=0.3;
-    musicStarted=true;
-  }catch{}
+    musicStarted = true;
+  }catch(e){
+    // зарим үед дараагийн gesture дээр асна
+    musicStarted = false;
+  }
 }
 
-loveMsg.addEventListener("focus", startMusic);
+// textarea focus/click/typing дээр хөгжим асаах
+["focus","click","touchstart","input"].forEach(ev=>{
+  loveMsg.addEventListener(ev, startMusicOnce, { passive: true });
+});
+
+/* ===== LIVE char counter ===== */
+function updateCount(){
+  if(!charCount) return;
+  const len = (loveMsg.value || "").length;
+  charCount.textContent = `${len} / 420`;
+}
+loveMsg.addEventListener("input", updateCount);
+updateCount();
+
+/* ===== FIRESTORE: save message / start ===== */
+async function saveMessageIfAny(){
+  const message = (loveMsg.value || "").trim();
+  await setDoc(doc(db, "clicks", sid), {
+    sid,
+    name: personName,
+    loveMsg: message || "",
+    loveMsgUpdatedAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
 
 /* ===== START BUTTON ===== */
-startBtn.addEventListener("click", ()=>{
-  startMusic();
+startBtn.addEventListener("click", async () => {
+  await startMusicOnce();
+
+  // message preview
+  const message = (loveMsg.value || "").trim();
+  msgPreview.textContent = message ? `“${message}”` : "";
+
+  // save message + startedAt
+  try{
+    await setDoc(doc(db, "clicks", sid), {
+      sid,
+      name: personName,
+      loveMsg: message || "",
+      startedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }catch(e){
+    console.log("save start/message failed:", e);
+  }
+
   startScreen.classList.add("hidden");
   askScreen.classList.remove("hidden");
-
-  msgPreview.textContent =
-    loveMsg.value.trim() ? `“${loveMsg.value}”` : "";
 });
 
 /* ===== NO LOGIC ===== */
-let noCount=0;
-let yesScale=1;
+let noCountLocal = 0;
+let yesScale = 1;
 
-function moveNo(step){
-  const positions=[
-    {left:40, top:20},
-    {left:300, top:20},
-    {left:60, top:75},
-    {left:300, top:80}
+const images = ["img.jpg","img2.png","img3.png","img4.png","img5.png"];
+
+const noTexts = [
+  "No",
+  "Чи бүрэн итгэлтэй байна уу?? 😳",
+  "Дахиад бод доо 🥺",
+  "Сүүлийн боломж шүү 😭",
+  "За ойлголоо 💔"
+];
+
+// 2,3,4 дээр “өөр газар” байрлуулах (arena дотор absolute)
+function moveNoByStep(step){
+  // arena хэмжээ: ~560px хүрэхгүй, мобайл дээр багасна
+  // тиймээс px биш, % хэрэглэвэл найдвартай
+  const positions = [
+    { left: "8%",  top: "12%" },  // step 2
+    { left: "70%", top: "12%" },  // step 3
+    { left: "22%", top: "68%" }   // step 4
   ];
-  const p=positions[Math.min(step-2,3)];
-  noBtn.style.left=p.left+"px";
-  noBtn.style.top=p.top+"px";
-  noBtn.style.transform="translate(0,0)";
+  const idx = clamp(step - 2, 0, positions.length - 1);
+  const p = positions[idx];
+
+  noBtn.style.left = p.left;
+  noBtn.style.top  = p.top;
+  noBtn.style.transform = "translate(0,0)";
 }
 
-noBtn.addEventListener("click", async()=>{
-  noCount++;
+async function trackNo(){
+  await setDoc(doc(db, "clicks", sid), {
+    sid,
+    name: personName,
+    choice: "no",
+    lastNoAt: serverTimestamp(),
+    noCount: increment(1),
+    loveMsg: (loveMsg.value || "").trim(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
 
-  const images=["img.jpg","img2.png","img3.png","img4.png","img5.png"];
-  img.src=images[noCount % images.length];
+noBtn.addEventListener("click", async () => {
+  noCountLocal++;
 
-  yesScale=Math.min(yesScale*1.18,6);
-  yesBtn.style.transform=
-    `translate(-120%,-50%) scale(${yesScale})`;
+  // image rotate
+  if(img) img.src = images[noCountLocal % images.length];
 
-  const texts=[
-    "No",
-    "Чи итгэлтэй юу? 😳",
-    "Дахиад бод доо 🥺",
-    "Сүүлийн боломж 😭",
-    "За ойлголоо 💔"
-  ];
-  noBtn.textContent=texts[Math.min(noCount,4)];
+  // yes grows
+  yesScale = clamp(yesScale * 1.18, 1, 6);
+  yesBtn.style.transform = `translate(-120%,-50%) scale(${yesScale})`;
 
-  if(noCount===2||noCount===3||noCount===4){
-    moveNo(noCount);
+  // no text changes every click
+  noBtn.textContent = noTexts[clamp(noCountLocal, 0, 4)];
+
+  // 2,3,4 дээр байрлал өөрчилнө (hover escape байхгүй)
+  if(noCountLocal === 2 || noCountLocal === 3 || noCountLocal === 4){
+    moveNoByStep(noCountLocal);
   }
 
-  await setDoc(doc(db,"clicks","default"),{
-    noCount: increment(1),
-    updatedAt: serverTimestamp()
-  },{merge:true});
+  if(hint){
+    hint.textContent = (noCountLocal >= 4) ? "😶‍🌫️ ..." : "";
+  }
 
-  if(noCount>=5){
+  // save NO count + message
+  try{
+    await trackNo();
+  }catch(e){
+    console.log("trackNo failed:", e);
+  }
+
+  // 5 дахь дээр NO end
+  if(noCountLocal >= 5){
     askScreen.classList.add("hidden");
     noEndScreen.classList.remove("hidden");
   }
 });
 
-/* ===== YES ===== */
-yesBtn.addEventListener("click", ()=>{
+/* ===== YES LOGIC ===== */
+async function trackYes(){
+  await setDoc(doc(db, "clicks", sid), {
+    sid,
+    name: personName,
+    choice: "yes",
+    lastYesAt: serverTimestamp(),
+    yesCount: increment(1),
+    loveMsg: (loveMsg.value || "").trim(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
+yesBtn.addEventListener("click", async () => {
+  await startMusicOnce();
+
+  // save message (just in case)
+  try{
+    await saveMessageIfAny();
+  }catch(e){}
+
+  // track YES
+  try{
+    await trackYes();
+  }catch(e){
+    console.log("trackYes failed:", e);
+  }
+
   askScreen.classList.add("hidden");
   yesScreen.classList.remove("hidden");
 
-  yesText.textContent=
-    `${personName}, чи намайг хамгийн аз жаргалтай хүн болголоо! 💗`;
+  yesText.textContent = `${personName}, чи намайг хамгийн аз жаргалтай хүн болголоо! 💗`;
 
-  confetti({particleCount:170,spread:85,origin:{y:0.6}});
+  // confetti
+  try{
+    confetti({ particleCount: 170, spread: 85, origin: { y: 0.6 } });
+    setTimeout(() => confetti({ particleCount: 120, spread: 110, origin: { y: 0.6 } }), 260);
+  }catch(e){}
 });
