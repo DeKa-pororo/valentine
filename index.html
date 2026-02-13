@@ -1,119 +1,122 @@
 <!doctype html>
 <html lang="mn">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Valentine 💕</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Valentine 💕</title>
 
-  <style>
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family:system-ui;
-      background:linear-gradient(135deg,#f7c7d9,#f3b3cc);
-    }
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  font-family:system-ui;
+  background:linear-gradient(135deg,#f7c7d9,#f3b3cc);
+}
 
-    .card{
-      width:min(560px,92vw);
-      padding:26px;
-      border-radius:22px;
-      background:rgba(255,255,255,.25);
-      backdrop-filter:blur(10px);
-      text-align:center;
-      position:relative;
-      overflow:hidden;
-      box-shadow:0 18px 60px rgba(0,0,0,.15);
-    }
+.card{
+  width:min(560px,92vw);
+  padding:26px;
+  border-radius:22px;
+  background:rgba(255,255,255,.25);
+  backdrop-filter:blur(10px);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.15);
+}
 
-    .hidden{ display:none; }
+.hidden{ display:none; }
 
-    h1{
-      color:#7a1845;
-      font-weight:900;
-      margin:0 0 10px;
-      font-size:clamp(22px,4vw,30px);
-    }
+h1{
+  color:#7a1845;
+  font-weight:900;
+  margin:0 0 10px;
+  font-size:clamp(22px,4vw,30px);
+}
 
-    .sub{
-      margin:6px 0 14px;
-      color:rgba(0,0,0,.65);
-      font-size:14px;
-    }
+.sub{
+  margin:6px 0 14px;
+  color:rgba(0,0,0,.65);
+  font-size:14px;
+}
 
-    img{
-      width:180px;
-      margin:14px 0;
-      transition:.3s;
-    }
+img{
+  width:180px;
+  margin:14px 0;
+  transition:.3s;
+}
 
-    .arena{
-      position:relative;
-      height:120px;
-      margin-top:8px;
-    }
+.arena{
+  position:relative;
+  height:120px;
+  margin-top:8px;
+}
 
-    button{
-      border:0;
-      padding:14px 18px;
-      border-radius:14px;
-      font-weight:900;
-      font-size:16px;
-      color:#fff;
-      position:absolute;
-      cursor:pointer;
-      box-shadow:0 10px 18px rgba(0,0,0,.18);
-    }
+/* ✅ Зөвхөн YES / NO */
+.arena button{
+  border:0;
+  padding:14px 18px;
+  border-radius:14px;
+  font-weight:900;
+  font-size:16px;
+  color:#fff;
+  position:absolute;
+  cursor:pointer;
+  box-shadow:0 10px 18px rgba(0,0,0,.18);
+}
 
-    #yesBtn{
-      background:#2ecc71;
-      left:50%;
-      top:50%;
-      transform:translate(-120%,-50%) scale(1);
-    }
+#yesBtn{
+  background:#2ecc71;
+  left:50%;
+  top:50%;
+  transform:translate(-120%,-50%) scale(1);
+}
 
-    #noBtn{
-      background:#e74c3c;
-      left:50%;
-      top:50%;
-      transform:translate(10%,-50%);
-      white-space:nowrap;
-    }
+#noBtn{
+  background:#e74c3c;
+  left:50%;
+  top:50%;
+  transform:translate(10%,-50%);
+  white-space:nowrap;
+}
 
-    textarea{
-      width:100%;
-      padding:12px;
-      border-radius:14px;
-      border:0;
-      outline:none;
-      background:rgba(255,255,255,.9);
-      resize:none;
-      min-height:80px;
-    }
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:0;
+  outline:none;
+  background:rgba(255,255,255,.9);
+  resize:none;
+  min-height:80px;
+}
 
-    .tapbtn{
-      margin-top:12px;
-      background:#7a1845;
-      color:#fff;
-      border:0;
-      padding:14px 18px;
-      border-radius:14px;
-      font-weight:900;
-      cursor:pointer;
-    }
+/* ✅ Start button absolute биш */
+.tapbtn{
+  position:relative;
+  margin-top:12px;
+  background:#7a1845;
+  color:#fff;
+  border:0;
+  padding:14px 18px;
+  border-radius:14px;
+  font-weight:900;
+  cursor:pointer;
+}
 
-    .note{
-      margin-top:10px;
-      font-size:13px;
-      color:rgba(0,0,0,.55);
-    }
-  </style>
+.note{
+  margin-top:10px;
+  font-size:13px;
+  color:rgba(0,0,0,.55);
+}
+</style>
 </head>
 
 <body>
 
-<!-- START -->
+<!-- START SCREEN -->
 <div class="card" id="startScreen">
   <h1>💕 Нэг удаа дарж эхлүүлээрэй</h1>
 
@@ -121,10 +124,16 @@
     placeholder="Сэтгэлийн үгээ энд бичээрэй…">
   </textarea>
 
-  <button class="tapbtn" id="startBtn">Tap to Start 🎶</button>
+  <button class="tapbtn" id="startBtn">
+    Tap to Start 🎶
+  </button>
+
+  <div class="note">
+    Дуу асаахын тулд эхлээд энд 1 удаа дарна шүү 🎵
+  </div>
 </div>
 
-<!-- ASK -->
+<!-- ASK SCREEN -->
 <div class="card hidden" id="askScreen">
   <h1 id="titleText"></h1>
   <div class="sub" id="msgPreview"></div>
@@ -139,13 +148,13 @@
   <div class="note" id="hint"></div>
 </div>
 
-<!-- YES -->
+<!-- YES SCREEN -->
 <div class="card hidden" id="yesScreen">
   <h1 id="yesText"></h1>
   <img src="yes.gif" style="width:220px">
 </div>
 
-<!-- NO END -->
+<!-- NO END SCREEN -->
 <div class="card hidden" id="noEndScreen">
   <h1>За ойлголоо… 😭</h1>
   <img src="sad.gif" style="width:220px">
