@@ -92,14 +92,25 @@ function maybeEscape(){
 }
 
 async function track(choice){
-  await setDoc(doc(db, "clicks", getSid()), {
+  const base = {
     sid: getSid(),
-    name: personName,
+    name: personName,      // (name param ашиглаж байгаа бол)
     choice,
-    noCount,
     updatedAt: serverTimestamp()
-  }, { merge: true });
+  };
+
+  if(choice === "no"){
+    // ✅ refresh хийсэн ч Firestore дээр нийтээрээ нэмэгдэнэ
+    await setDoc(doc(db, "clicks", getSid()), {
+      ...base,
+      noCount: increment(1)
+    }, { merge: true });
+  } else {
+    // ✅ Yes дээр noCount-ыг overwrite хийхгүй
+    await setDoc(doc(db, "clicks", getSid()), base, { merge: true });
+  }
 }
+
 
 async function takeShotYesOnly(){
   const canvas = await html2canvas(askScreen, { scale: 2 });
