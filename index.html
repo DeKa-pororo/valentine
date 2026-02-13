@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Valentine 💕</title>
+
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
+    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);}
+  .card{width:min(540px,92vw);padding:26px;border-radius:22px;background:rgba(255,255,255,.25);
+    backdrop-filter:blur(10px);text-align:center;position:relative;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.15);}
+  .hidden{display:none;}
+  h1{color:#7a1845;font-weight:900;margin:0 0 10px;font-size:clamp(22px,4vw,32px);}
+  img{width:180px;margin:14px 0;transition:.3s;}
+  .arena{position:relative;height:110px;margin-top:6px;}
+  button{border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
+    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent;}
+  #yesBtn{background:#2ecc71;left:50%;top:50%;transform:translate(-120%,-50%) scale(1);}
+  #noBtn{background:#e74c3c;left:50%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
+  .note{margin-top:10px;color:rgba(0,0,0,.55);font-size:13px;}
+</style>
+</head>
+
+<body>
+
+<!-- ASK SCREEN -->
+<div class="card" id="askScreen">
+  <h1 id="titleText">Will you be my Valentine? 💕</h1>
+  <img id="cuteImg" src="img1.png" alt="cute">
+  <div class="arena" id="arena">
+    <button id="yesBtn">Yes </button>
+    <button id="noBtn">No </button>
+  </div>
+  <!-- <div class="note" id="hint">“No” дарвал “Yes” улам томорно 😄</div> -->
+  <!-- <div class="note">iPhone/iPad дээр хөгжим эхний товч дарсны дараа л асна.</div> -->
+</div>
+
+<!-- YES SCREEN -->
+<div class="card hidden" id="yesScreen">
+  <h1 id="yesText">Knew you would say yes! 🎉</h1>
+  <img src="yes.gif" alt="yay" style="width:220px;margin:12px 0 6px;">
+  <div class="note">You just made me the happiest person! 💗</div>
+</div>
+
+<!-- Romantic music -->
+<audio id="bgm" src="music.mp3" preload="auto" loop></audio>
+
+<!-- Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<!-- Screenshot -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
