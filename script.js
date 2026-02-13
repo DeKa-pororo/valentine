@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, doc, setDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/** ✅ Firebase config-оо энд paste */
+/** ✅ Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyCfRFNVsQ-6-9DyQgCIML4lGuY_-YCoDCs",
   authDomain: "valentine-c7202.firebaseapp.com",
@@ -10,7 +10,7 @@ const firebaseConfig = {
   messagingSenderId: "97199788414",
   appId: "1:97199788414:web:d4a9a8ba08ac7692eb632f",
   measurementId: "G-HTW2Q4FMZD"
-}
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -32,7 +32,7 @@ let yesScale = 1;
 
 const ESCAPE_AFTER = 3;
 const GROW_FACTOR  = 1.18;
-const images = ["img1.png","img2.png","img3.png","img4.png","img5.png"];
+const images = ["img.jpg","img2.png","img3.png","img4.png","img5.png"];
 
 // URL params
 function qp(key){ return new URLSearchParams(location.search).get(key); }
@@ -44,15 +44,40 @@ function getName(){
 const personName = getName();
 if(titleText) titleText.textContent = `Will you be my Valentine, ${personName}? 💕`;
 
-// iOS autoplay restriction: first user gesture needed
+// 💗 Floating hearts
+const heartsLayer = document.getElementById("hearts");
+const heartEmojis = ["💗","💖","💕","💘","💞","🌸"];
+function spawnHeart(){
+  if(!heartsLayer) return;
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+  h.style.left = Math.random()*100 + "vw";
+  h.style.animationDuration = (4 + Math.random()*3) + "s";
+  h.style.fontSize = (14 + Math.random()*18) + "px";
+  heartsLayer.appendChild(h);
+  setTimeout(()=>h.remove(), 8000);
+}
+setInterval(spawnHeart, 350);
+
+// 🎵 iOS autoplay restriction + fade-in (River Flows In You soft)
 let musicStarted = false;
 async function startMusicOnce(){
   if(musicStarted) return;
   try{
-    bgm.volume = 0.35;
+    bgm.volume = 0.0;
     await bgm.play();
     musicStarted = true;
-  }catch{ /* next gesture will try again */ }
+
+    let v = 0;
+    const t = setInterval(() => {
+      v += 0.03;
+      bgm.volume = Math.min(v, 0.35);
+      if (bgm.volume >= 0.35) clearInterval(t);
+    }, 120);
+  }catch{
+    musicStarted = false;
+  }
 }
 window.addEventListener("pointerdown", startMusicOnce);
 window.addEventListener("touchstart", startMusicOnce, { passive:true });
@@ -75,25 +100,19 @@ function maybeEscape(){
   if(noCountLocal >= ESCAPE_AFTER) moveNoButtonRandom();
 }
 
-/** ✅ Firestore tracking
- * - NO дээр: noCount сервер талд increment(1) → refresh хийсэн ч алдагдахгүй
- * - YES дээр: screenshotDataUrl хадгална
- */
+// ✅ NO tracking (refresh хийсэн ч нийлнэ)
 async function trackNo(){
   await setDoc(doc(db, "clicks", getSid()), {
     sid: getSid(),
     name: personName,
-    choice: "no",
+    lastNoAt: serverTimestamp(),
     noCount: increment(1),
     updatedAt: serverTimestamp()
   }, { merge: true });
 }
 
 async function takeShotAsSmallJpegDataUrl(){
-  // хэмжээ багасгахын тулд scale 1, JPEG quality 0.45
   const canvas = await html2canvas(askScreen, { scale: 1 });
-
-  // canvas-аа дэндүү том бол resize хийж багасгана (өргөн 520px орчим)
   const maxW = 520;
   if(canvas.width > maxW){
     const ratio = maxW / canvas.width;
@@ -104,18 +123,16 @@ async function takeShotAsSmallJpegDataUrl(){
     ctx.drawImage(canvas, 0, 0, c2.width, c2.height);
     return c2.toDataURL("image/jpeg", 0.45);
   }
-
   return canvas.toDataURL("image/jpeg", 0.45);
 }
 
 async function trackYesWithScreenshot(){
-  const screenshotDataUrl = await takeShotAsSmallJpegDataUrl(); // data:image/jpeg;base64,...
-
+  const screenshotDataUrl = await takeShotAsSmallJpegDataUrl();
   await setDoc(doc(db, "clicks", getSid()), {
     sid: getSid(),
     name: personName,
     choice: "yes",
-    screenshotDataUrl,      // ✅ Firestore дотор хадгална
+    screenshotDataUrl,
     shotAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   }, { merge: true });
@@ -130,8 +147,8 @@ noBtn.addEventListener("click", async () => {
   yesScale = clamp(yesScale * GROW_FACTOR, 1, 6);
   yesBtn.style.transform = `translate(-120%, -50%) scale(${yesScale})`;
 
-  if(noCountLocal === 1) noBtn.textContent = "Are you positive? 😳";
-  if(noCountLocal >= ESCAPE_AFTER) hint.textContent = "Одоо “No” баригдахгүй дээ 😈";
+  if(noCountLocal === 1) noBtn.textContent = "Чи бүрэн итгэлтэй байна уу?? 😳";
+  if(noCountLocal >= ESCAPE_AFTER && hint) hint.textContent = "Одоо “No” баригдахгүй дээ 😈";
   if(noCountLocal >= ESCAPE_AFTER) moveNoButtonRandom();
 
   await trackNo();
@@ -152,21 +169,21 @@ yesBtn.addEventListener("click", async () => {
   try{
     await trackYesWithScreenshot();
   }catch(e){
-    // Хэрвээ 1MiB limit давбал энд алдаа өгч болно.
-    // Тэгвэл quality-г 0.35 болгож бууруул.
     console.log("Screenshot save failed:", e);
-    // fallback: ядаж yes лог үлдээе
     await setDoc(doc(db, "clicks", getSid()), {
       sid: getSid(), name: personName, choice: "yes", updatedAt: serverTimestamp()
     }, { merge: true });
   }
 
-  if(yesText) yesText.textContent = `Knew you would say yes, ${personName}! 🎉`;
+  if(yesText) yesText.textContent = `Чиний хариуг зүрх догдлон хүлээж, зөвшөөрнө гэж найдаж байсан, ${personName}! 🎉`;
 
   askScreen.classList.add("hidden");
   yesScreen.classList.remove("hidden");
 
-  // Confetti
+  // 🎉 Confetti
   confetti({ particleCount: 170, spread: 85, origin: { y: 0.6 } });
   setTimeout(() => confetti({ particleCount: 130, spread: 110, origin: { y: 0.6 } }), 280);
+
+  // 💗 Hearts burst
+  for(let i=0;i<18;i++) spawnHeart();
 });

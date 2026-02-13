@@ -6,41 +6,67 @@
 <title>Valentine 💕</title>
 
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
-    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);}
-  .card{width:min(540px,92vw);padding:26px;border-radius:22px;background:rgba(255,255,255,.25);
-    backdrop-filter:blur(10px);text-align:center;position:relative;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.15);}
+  body{
+    margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
+    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);
+  }
+  .card{
+    width:min(540px,92vw);padding:26px;border-radius:22px;
+    background:rgba(255,255,255,.25);
+    backdrop-filter:blur(10px);
+    text-align:center;position:relative;overflow:hidden;
+    box-shadow:0 18px 60px rgba(0,0,0,.15);
+    z-index:1;
+  }
   .hidden{display:none;}
   h1{color:#7a1845;font-weight:900;margin:0 0 10px;font-size:clamp(22px,4vw,32px);}
   img{width:180px;margin:14px 0;transition:.3s;}
   .arena{position:relative;height:110px;margin-top:6px;}
-  button{border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
-    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent;}
-  #yesBtn{background:#2ecc71;left:50%;top:50%;transform:translate(-120%,-50%) scale(1);}
-  #noBtn{background:#e74c3c;left:50%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
+  button{
+    border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
+    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);
+    -webkit-tap-highlight-color:transparent;
+  }
+  #yesBtn{background:#2ecc71;left:40%;top:50%;transform:translate(-120%,-50%) scale(1);}
+  #noBtn{background:#e74c3c;left:40%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
   .note{margin-top:10px;color:rgba(0,0,0,.55);font-size:13px;}
+
+  /* 💗 Floating hearts background */
+  #hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  @keyframes floatUp{
+    from{transform:translateY(110vh) translateX(0) scale(.8);opacity:0}
+    10%{opacity:.9}
+    to{transform:translateY(-20vh) translateX(60px) scale(1.2);opacity:0}
+  }
+  .heart{
+    position:absolute;bottom:-20px;font-size:18px;opacity:0;
+    filter:drop-shadow(0 8px 10px rgba(0,0,0,.15));
+    animation:floatUp linear forwards;
+  }
 </style>
 </head>
 
 <body>
+
+<!-- Hearts layer -->
+<div id="hearts"></div>
 
 <!-- ASK SCREEN -->
 <div class="card" id="askScreen">
   <h1 id="titleText">Will you be my Valentine? 💕</h1>
   <img id="cuteImg" src="img1.png" alt="cute">
   <div class="arena" id="arena">
-    <button id="yesBtn">Yes </button>
-    <button id="noBtn">No </button>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
   </div>
-  <!-- <div class="note" id="hint">“No” дарвал “Yes” улам томорно 😄</div> -->
-  <!-- <div class="note">iPhone/iPad дээр хөгжим эхний товч дарсны дараа л асна.</div> -->
+  <div class="note" id="hint">“No” дарвал “Yes” улам томорно 😄</div>
 </div>
 
 <!-- YES SCREEN -->
 <div class="card hidden" id="yesScreen">
-  <h1 id="yesText">Knew you would say yes! 🎉</h1>
+  <h1 id="yesText">Чиний хариуг зүрх догдлон хүлээж, зөвшөөрнө гэж найдаж байсан 🎉</h1>
   <img src="yes.gif" alt="yay" style="width:220px;margin:12px 0 6px;">
-  <div class="note">You just made me the happiest person! 💗</div>
+  <div class="note">Чи намайг яг одоо хамгийн аз жаргалтай хүн болголоо! 💗</div>
 </div>
 
 <!-- Romantic music -->
