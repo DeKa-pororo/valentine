@@ -1,106 +1,214 @@
 <!doctype html>
 <html lang="mn">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Valentine 💕</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Valentine 💕</title>
 
-<style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui;
-    background:linear-gradient(135deg,#f7c7d9,#f3b3cc);}
-  .card{width:min(560px,92vw);padding:26px;border-radius:22px;background:rgba(255,255,255,.25);
-    backdrop-filter:blur(10px);text-align:center;position:relative;overflow:hidden;box-shadow:0 18px 60px rgba(0,0,0,.15);}
-  .hidden{display:none;}
-  h1{color:#7a1845;font-weight:900;margin:0 0 10px;font-size:clamp(22px,4vw,32px);}
-  .sub{margin:6px 0 14px;color:rgba(0,0,0,.65);font-size:14px;line-height:1.4}
-  img{width:180px;margin:14px 0;transition:.3s;}
+    <style>
+      #msgPreview{
+  font-weight: 700;
+  color: rgba(122,24,69,.9);
+  margin-top: 8px;
+}
 
-  .arena{position:relative;height:120px;margin-top:8px;}
-  button{border:0;padding:14px 18px;border-radius:14px;font-weight:900;font-size:16px;color:#fff;
-    position:absolute;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent;}
-  #yesBtn{background:#2ecc71;left:50%;top:50%;transform:translate(-120%,-50%) scale(1);}
-  #noBtn{background:#e74c3c;left:50%;top:50%;transform:translate(10%,-50%);white-space:nowrap;}
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: system-ui;
+        background: linear-gradient(135deg, #f7c7d9, #f3b3cc);
+      }
+      .card {
+        width: min(560px, 92vw);
+        padding: 26px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.15);
+      }
+      .hidden {
+        display: none;
+      }
+      h1 {
+        color: #7a1845;
+        font-weight: 900;
+        margin: 0 0 10px;
+        font-size: clamp(22px, 4vw, 32px);
+      }
+      .sub {
+        margin: 6px 0 14px;
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      img {
+        width: 180px;
+        margin: 14px 0;
+        transition: 0.3s;
+      }
 
-  .note{margin-top:12px;color:rgba(0,0,0,.58);font-size:13px;}
+      .arena {
+        position: relative;
+        height: 120px;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        padding: 14px 18px;
+        border-radius: 14px;
+        font-weight: 900;
+        font-size: 16px;
+        color: #fff;
+        position: absolute;
+        cursor: pointer;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
+        -webkit-tap-highlight-color: transparent;
+      }
+      #yesBtn {
+        background: #2ecc71;
+        left: 50%;
+        top: 50%;
+        transform: translate(-120%, -50%) scale(1);
+      }
+      #noBtn {
+        background: #e74c3c;
+        left: 50%;
+        top: 50%;
+        transform: translate(10%, -50%);
+        white-space: nowrap;
+      }
 
-  /* Start screen */
-  .tapbtn{
-    position:relative;
-    display:inline-flex;align-items:center;justify-content:center;
-    padding:14px 18px;border-radius:14px;
-    background:#7a1845;color:#fff;font-weight:900;
-    cursor:pointer;box-shadow:0 12px 22px rgba(0,0,0,.18);
-    border:0;font-size:16px;
-  }
-  .field{
-    width:100%;
-    margin-top:10px;
-    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
-  }
-  input, textarea{
-    width:min(520px,100%);
-    padding:12px 14px;border-radius:14px;border:0;
-    outline:none;
-    background:rgba(255,255,255,.85);
-    font-size:14px;
-  }
-  textarea{min-height:84px;resize:none;}
-  .mini{font-size:12px;color:rgba(0,0,0,.55);margin-top:6px;}
-</style>
-</head>
+      .note {
+        margin-top: 12px;
+        color: rgba(0, 0, 0, 0.58);
+        font-size: 13px;
+      }
 
-<body>
+      /* Start screen */
+      .tapbtn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 18px;
+        border-radius: 14px;
+        background: #7a1845;
+        color: #fff;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+        border: 0;
+        font-size: 16px;
+      }
+      .field {
+        width: 100%;
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      input,
+      textarea {
+        width: min(520px, 100%);
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 0;
+        outline: none;
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 14px;
+      }
+      textarea {
+        min-height: 84px;
+        resize: none;
+      }
+      .mini {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.55);
+        margin-top: 6px;
+      }
+    </style>
+  </head>
 
-<!-- START SCREEN -->
-<div class="card" id="startScreen">
-  <h1 id="startTitle">💕 Нэг удаа дарж эхлүүлээрэй</h1>
-  <div class="sub">
-    iPhone/iPad дээр хөгжим явахгүй байж магадгүй :P <br/>
-    <b>Энд 1 удаа дар</b> → хөгжим асна, дараа нь асуулт гарна 
-  </div>
+  <body>
+    <!-- START SCREEN -->
+    <div class="card" id="startScreen">
+      <h1 id="startTitle"> Нэг удаа дарж эхлүүлээрэй</h1>
+      <div class="sub">
+        iPhone/iPad дээр хөгжим явахгүй байж магадгүй :P <br />
+        <b>Энд 1 удаа дар</b> → хөгжим асна, дараа нь асуулт гарна
+      </div>
 
-  <div class="field">
-    <textarea id="loveMsg" maxlength="420" placeholder="Сэтгэлийн үгээ энд бичээрэй… (жишээ нь шүү : Энэ асуултыг асуух гээд их удаан зориглолоо…')"></textarea>
-    <div class="mini" id="charCount">0 / 420</div>
-  </div>
+      <div class="field">
+        <textarea
+          id="loveMsg"
+          maxlength="420"
+          placeholder="Сэтгэлийн үгээ энд бичээрэй… (жишээ нь шүү : Энэ асуултыг асуух гээд их удаан зориглолоо…')"
+        ></textarea>
+        <div class="mini" id="charCount">0 / 420</div>
+      </div>
 
-  <div style="margin-top:14px;">
-    <button class="tapbtn" id="startBtn">Tap to Start 🎶</button>
-  </div>
+      <div style="margin-top: 14px">
+        <button class="tapbtn" id="startBtn">Tap to Start 🎶</button>
+      </div>
 
-  <div class="note" id="startHint">✨ Дарахад хөгжим асна, тэгээд “Yes/No” гарна.</div>
+      <div class="note" id="startHint">
+        ✨ Дарахад хөгжим асна, тэгээд “Yes/No” гарна.
+      </div>
+    </div>
+
+    <!-- ASK SCREEN -->
+    <div class="card hidden" id="askScreen">
+      <h1 id="titleText">Надтай хамт ирээдүйгээ бүтээж, олон сайхан дурсамж бүтээх үү?</h1>
+
+      <div class="sub">
+        <div>Сайн бодоорой…</div>
+        <div>
+           Дуугаа сонсоод, өнгөрсөн • одоо • ирээдүйгээ бодоод хариулаарай 😌
+        </div>
+      </div>
+
+      <div class="sub" id="msgPreview"></div>
+
+      <img id="cuteImg" src="img.jpg" alt="cute" />
+      <div class="arena" id="arena">
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
+      </div>
+      <div class="note" id="hint"></div>
+    </div>
+
+    <!-- YES SCREEN -->
+    <div class="card hidden" id="yesScreen">
+      <h1 id="yesText">🎉</h1>
+      <img src="yes.gif" alt="yay" style="width: 220px; margin: 12px 0 6px" />
+      <div class="note">
+        Чи намайг яг одоо хамгийн аз жаргалтай хүн болголоо! 💗
+      </div>
+    </div>
+
+    <!-- NO END SCREEN -->
+<div class="card hidden" id="noEndScreen">
+  <h1>За ойлголоо… 😭</h1>
+  <img src="sad.gif" alt="sad" style="width:220px;margin:12px 0 6px;">
+  <div class="note">Чамайг хүндэлж байна. Дараа дахин асуухгүй ээ 💔</div>
 </div>
 
-<!-- ASK SCREEN -->
-<div class="card hidden" id="askScreen">
-  <h1 id="titleText">Will you be my Valentine? 💕</h1>
 
-  <div class="sub" id="msgPreview"></div>
+    <!-- Romantic music -->
+    <audio id="bgm" src="music.mp3" preload="auto" loop></audio>
 
-  <img id="cuteImg" src="img.jpg" alt="cute">
-  <div class="arena" id="arena">
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
-  </div>
-  <div class="note" id="hint"></div>
-</div>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-<!-- YES SCREEN -->
-<div class="card hidden" id="yesScreen">
-  <h1 id="yesText">🎉</h1>
-  <img src="yes.gif" alt="yay" style="width:220px;margin:12px 0 6px;">
-  <div class="note">Чи намайг яг одоо хамгийн аз жаргалтай хүн болголоо! 💗</div>
-</div>
+    <!-- Screenshot (хэрвээ ашиглаж байвал) -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<!-- Romantic music -->
-<audio id="bgm" src="music.mp3" preload="auto" loop></audio>
-
-<!-- Confetti -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
-<!-- Screenshot (хэрвээ ашиглаж байвал) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-<script type="module" src="script.js"></script>
-</body>
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
